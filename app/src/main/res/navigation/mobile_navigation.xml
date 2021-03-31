@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_add"
-        android:name="com.example.sophieslieblingsrezepte.ui.notifications.NotificationsFragment"
+        android:name="com.example.sophieslieblingsrezepte.ui.newRecipe.NewRecipeFragment"
         android:label="@string/title_add"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_new_recipe" />
 </navigation>

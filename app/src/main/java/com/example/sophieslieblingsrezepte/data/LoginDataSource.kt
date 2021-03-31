@@ -1,7 +1,9 @@
 package com.example.sophieslieblingsrezepte.data
 
 import android.util.Base64
+import android.util.JsonReader
 import com.example.sophieslieblingsrezepte.data.model.LoggedInUser
+import org.json.JSONObject
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
@@ -15,8 +17,8 @@ class LoginDataSource {
 
     fun login(username: String, password: String): Result<LoggedInUser> {
         try {
-            val future: CompletableFuture<String>? = CompletableFuture.supplyAsync {
-                var body: String = ""
+            val future: CompletableFuture<JSONObject>? = CompletableFuture.supplyAsync {
+                var body: JSONObject = JSONObject("{}")
                 val url = URL("https://auth.norsecorby.de/v2/token")
                 val connection = url.openConnection() as HttpURLConnection
                 try {
@@ -26,7 +28,10 @@ class LoginDataSource {
                     connection.setRequestProperty("Authorization", authHeaderValue);
                     val responseCode = connection.responseCode
                     println(responseCode)
-                    body = connection.inputStream.bufferedReader().use { it.readText() }
+                    val inputString = connection.inputStream.bufferedReader().use { it.readText() }
+                    body = JSONObject(inputString)
+                    val token = body.get("token")
+
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -38,7 +43,8 @@ class LoginDataSource {
 
             var token: String? = null
             if (future != null) {
-                token = future.get();
+                val body: JSONObject = future.get()
+                token = body.get("token") as String?
             }
             if (token != null && token.length > 0)
             {

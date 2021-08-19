@@ -25,8 +25,12 @@ class GalleryAdapter(context: Context?, galleryList: ArrayList<CreateList>) : Re
         viewHolder.title.setText(galleryList.get(i).image_title);
         viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
         viewHolder.img.setImageResource(galleryList.get(i).image_id);
+
         viewHolder.img.setOnClickListener(View.OnClickListener {
             Toast.makeText(context,"Image",Toast.LENGTH_SHORT).show();
+
+
+
         })
     }
 

@@ -28,9 +28,6 @@ class GalleryAdapter(context: Context?, galleryList: ArrayList<CreateList>) : Re
 
         viewHolder.img.setOnClickListener(View.OnClickListener {
             Toast.makeText(context,"Image",Toast.LENGTH_SHORT).show();
-
-
-
         })
     }
 

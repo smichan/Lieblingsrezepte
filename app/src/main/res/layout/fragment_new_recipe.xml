@@ -39,10 +39,12 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <TableLayout
+                android:id="@+id/tableLayoutNewRecipe"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <TableRow
+                    android:id="@+id/tableHeader"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -71,14 +73,16 @@
                         android:textAlignment="center" />
 
                     <Space
+                        android:id="@+id/spaceHeader"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="3" />
+                        android:layout_weight="1" />
                 </TableRow>
 
                 <TableRow
+                    android:id="@+id/editableIngredientRow"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent">
 
                     <EditText
                         android:id="@+id/editTextAmount"
@@ -106,7 +110,7 @@
 
                     <EditText
                         android:id="@+id/editTextIngredient"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="10"
                         android:inputType="textPersonName"
@@ -114,23 +118,15 @@
                         android:textAlignment="center"
                         tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
-                    <Button
-                        android:id="@+id/button"
-                        android:layout_width="0dp"
+                    <ImageButton
+                        android:id="@+id/buttonAddIngredient"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="3"
-                        android:text="+" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                        android:layout_weight="1"
+                        android:src="@drawable/ic_plus_icon" />
 
                 </TableRow>
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
             </TableLayout>
 
         </LinearLayout>

@@ -6,4 +6,14 @@ import androidx.lifecycle.ViewModel
 
 class NewRecipeViewModel : ViewModel() {
 
+
+
+
+
+
+
+
+
+
+
 }

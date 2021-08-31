@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.sophieslieblingsrezepte.R
 import android.widget.*
 import androidx.core.view.children
+import androidx.core.view.marginBottom
+import androidx.core.view.marginLeft
 import com.google.android.material.textfield.TextInputEditText
 
 
@@ -34,20 +36,17 @@ class NewRecipeFragment : Fragment() {
         return root
     }
 
-
-
     private fun addRow(ll: TableLayout)
     {
         val row = TableRow(context)
 
         val lp: TableRow.LayoutParams =
-            TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT)
-
+            TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT)
         row.layoutParams = lp
+
         val spaceHeader = getLayoutParams(ll, R.id.spaceHeader)
 
         val newEntry = listOf(TextView(context), TextView(context), TextView(context))
-        val newSpace = Space(context)
 
         val oldEntry = listOf<EditText>(
             ll.rootView.findViewById(R.id.editTextAmount),
@@ -63,14 +62,14 @@ class NewRecipeFragment : Fragment() {
             getLayoutParams(newEntry[i]).weight = getLayoutParams(oldEntry[i]).weight
             newEntry[i].textSize = 18f
             newEntry[i].textAlignment = View.TEXT_ALIGNMENT_CENTER
+            newEntry[i].setSingleLine(i<2)
+            newEntry[i].width = ViewGroup.LayoutParams.MATCH_PARENT
         }
         newEntry[2].textAlignment = View.TEXT_ALIGNMENT_TEXT_START
-
-        row.addView(newSpace)
-        getLayoutParams(newSpace).weight = spaceHeader.weight
+        getLayoutParams(newEntry[2]).leftMargin = 40
+        getLayoutParams(newEntry[2]).weight += spaceHeader.weight
 
         ll.addView(row, ll.childCount-1)
-
     }
 
     private fun getLayoutParams(view: View): LinearLayout.LayoutParams

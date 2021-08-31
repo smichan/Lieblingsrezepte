@@ -54,6 +54,8 @@ class NewRecipeFragment : Fragment() {
             ll.rootView.findViewById(R.id.editTextIngredient)
         )
 
+
+
         for (i: Int in 0..2)
         {
             newEntry[i].text = oldEntry[i].text.toString()
@@ -70,6 +72,8 @@ class NewRecipeFragment : Fragment() {
         getLayoutParams(newEntry[2]).weight += spaceHeader.weight
 
         ll.addView(row, ll.childCount-1)
+
+        newRecipeViewModel.addIngredient(Ingredient(newEntry[0].text.toString(), newEntry[1].text.toString(), newEntry[2].text.toString()))
     }
 
     private fun getLayoutParams(view: View): LinearLayout.LayoutParams

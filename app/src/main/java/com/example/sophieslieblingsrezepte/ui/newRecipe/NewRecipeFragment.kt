@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.sophieslieblingsrezepte.R
 import android.widget.*
 import androidx.core.view.children
+import com.google.android.material.textfield.TextInputEditText
 
 
 class NewRecipeFragment : Fragment() {
@@ -35,58 +36,50 @@ class NewRecipeFragment : Fragment() {
 
 
 
-    fun addRow(ll: TableLayout)
+    private fun addRow(ll: TableLayout)
     {
         val row = TableRow(context)
 
         val lp: TableRow.LayoutParams =
             TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT)
 
-        row.setLayoutParams(lp)
+        row.layoutParams = lp
+        val spaceHeader = getLayoutParams(ll, R.id.spaceHeader)
 
-        val amountHeader = (ll.rootView.findViewById<TextView>(R.id.textViewAmount).layoutParams) as LinearLayout.LayoutParams
-        val unitHeader = ll.rootView.findViewById<TextView>(R.id.textViewUnit).layoutParams as LinearLayout.LayoutParams
-        val ingredientHeader = ll.rootView.findViewById<TextView>(R.id.textViewIngredient).layoutParams as LinearLayout.LayoutParams
-        val spaceHeader = ll.rootView.findViewById<Space>(R.id.spaceHeader).layoutParams as LinearLayout.LayoutParams
+        val newEntry = listOf(TextView(context), TextView(context), TextView(context))
+        val newSpace = Space(context)
 
-        val amount = ll.rootView.findViewById<TextView>(R.id.editTextAmount).text
-        val unit = ll.rootView.findViewById<TextView>(R.id.editTextUnit).text
-        val ingredient = ll.rootView.findViewById<TextView>(R.id.editTextIngredient).text
+        val oldEntry = listOf<EditText>(
+            ll.rootView.findViewById(R.id.editTextAmount),
+            ll.rootView.findViewById(R.id.editTextUnit),
+            ll.rootView.findViewById(R.id.editTextIngredient)
+        )
 
+        for (i: Int in 0..2)
+        {
+            newEntry[i].text = oldEntry[i].text.toString()
+            oldEntry[i].text.clear()
+            row.addView(newEntry[i])
+            getLayoutParams(newEntry[i]).weight = getLayoutParams(oldEntry[i]).weight
+            newEntry[i].textSize = 18f
+            newEntry[i].textAlignment = View.TEXT_ALIGNMENT_CENTER
+        }
+        newEntry[2].textAlignment = View.TEXT_ALIGNMENT_TEXT_START
 
-        ll.rootView.findViewById<TextView>(R.id.editTextAmount).text = ""
-        ll.rootView.findViewById<TextView>(R.id.editTextUnit).text = ""
-        ll.rootView.findViewById<TextView>(R.id.editTextIngredient).text = ""
-
-        val newAmount = TextView(context)
-        val newUnit = TextView(context)
-        val newIngredient = TextView(context)
-        val newSpace = android.widget.Space(context)
-
-        newAmount.text = amount
-        newUnit.text = unit
-        newIngredient.text = ingredient
-
-
-        row.addView(newAmount)
-        row.addView(newUnit)
-        row.addView(newIngredient)
         row.addView(newSpace)
-
-        (newAmount.layoutParams as LinearLayout.LayoutParams).weight = amountHeader.weight
-        (newUnit.layoutParams as LinearLayout.LayoutParams).weight = unitHeader.weight
-        (newIngredient.layoutParams as LinearLayout.LayoutParams).weight = ingredientHeader.weight
-        (newSpace.layoutParams as LinearLayout.LayoutParams).weight = spaceHeader.weight
-
-        newAmount.textAlignment = View.TEXT_ALIGNMENT_CENTER
-        newUnit.textAlignment = View.TEXT_ALIGNMENT_CENTER
-        newIngredient.textAlignment = View.TEXT_ALIGNMENT_TEXT_START
+        getLayoutParams(newSpace).weight = spaceHeader.weight
 
         ll.addView(row, ll.childCount-1)
 
     }
 
+    private fun getLayoutParams(view: View): LinearLayout.LayoutParams
+    {
+        return view.layoutParams as LinearLayout.LayoutParams
+    }
 
-
+    private fun getLayoutParams(ll: TableLayout, id:Int): LinearLayout.LayoutParams {
+        return (ll.rootView.findViewById<View>(id).layoutParams) as LinearLayout.LayoutParams
+    }
 
 }

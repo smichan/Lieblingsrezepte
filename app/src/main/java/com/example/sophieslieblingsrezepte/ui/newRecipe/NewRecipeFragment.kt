@@ -9,9 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.sophieslieblingsrezepte.R
 import android.widget.*
 import androidx.core.view.children
-import androidx.core.view.marginBottom
-import androidx.core.view.marginLeft
-import com.google.android.material.textfield.TextInputEditText
+import androidx.lifecycle.Observer
 
 
 class NewRecipeFragment : Fragment() {
@@ -31,12 +29,42 @@ class NewRecipeFragment : Fragment() {
         val addButton = root.findViewById<ImageButton>(R.id.buttonAddIngredient)
 
         addButton.setOnClickListener{
-            addRow(ll)
+            val ingredient = getNewIngredient(ll)
+            newRecipeViewModel.addIngredient(ingredient)
         }
+
+        newRecipeViewModel.ingredients.observe(viewLifecycleOwner, Observer{
+            modelChanged(ll, it)
+        })
         return root
     }
 
-    private fun addRow(ll: TableLayout)
+    private fun modelChanged(ll: TableLayout, ingredients : List<Ingredient>)
+    {
+        // -2: do not remove the editable fields for the next ingredient
+        ll.removeViews(1, ll.childCount - 2)
+        ingredients.forEach{ x -> addRow(ll, x)}
+    }
+
+    private fun getNewIngredient(ll: TableLayout) : Ingredient
+    {
+        val entry = listOf<EditText>(
+        ll.rootView.findViewById(R.id.editTextAmount),
+        ll.rootView.findViewById(R.id.editTextUnit),
+        ll.rootView.findViewById(R.id.editTextIngredient)
+    )
+        val newIngredient = Ingredient(entry[0].text.toString(), entry[1].text.toString(), entry[2].text.toString())
+
+        for (i: Int in 0..2)
+        {
+            entry[i].text.clear()
+        }
+        return newIngredient
+    }
+
+
+
+    private fun addRow(ll: TableLayout, ingredient: Ingredient)
     {
         val row = TableRow(context)
 
@@ -53,13 +81,12 @@ class NewRecipeFragment : Fragment() {
             ll.rootView.findViewById(R.id.editTextUnit),
             ll.rootView.findViewById(R.id.editTextIngredient)
         )
-
-
+        newEntry[0].text = ingredient.amount
+        newEntry[1].text = ingredient.unit
+        newEntry[2].text = ingredient.ingredient
 
         for (i: Int in 0..2)
         {
-            newEntry[i].text = oldEntry[i].text.toString()
-            oldEntry[i].text.clear()
             row.addView(newEntry[i])
             getLayoutParams(newEntry[i]).weight = getLayoutParams(oldEntry[i]).weight
             newEntry[i].textSize = 18f
@@ -72,8 +99,6 @@ class NewRecipeFragment : Fragment() {
         getLayoutParams(newEntry[2]).weight += spaceHeader.weight
 
         ll.addView(row, ll.childCount-1)
-
-        newRecipeViewModel.addIngredient(Ingredient(newEntry[0].text.toString(), newEntry[1].text.toString(), newEntry[2].text.toString()))
     }
 
     private fun getLayoutParams(view: View): LinearLayout.LayoutParams

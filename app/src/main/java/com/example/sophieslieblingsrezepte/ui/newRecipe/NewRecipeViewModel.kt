@@ -17,7 +17,7 @@ class NewRecipeViewModel : ViewModel() {
 
     fun addIngredient(ingredient: Ingredient)
     {
-        var list = ingredients.value
+        var list = _ingredients.value
         list = list?.plus(ingredient)
 
         _ingredients.value = list!!

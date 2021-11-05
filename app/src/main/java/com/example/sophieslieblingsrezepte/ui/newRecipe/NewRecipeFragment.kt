@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sophieslieblingsrezepte.R
 import android.widget.*
-import androidx.core.view.children
 import androidx.lifecycle.Observer
 
 
@@ -25,25 +24,44 @@ class NewRecipeFragment : Fragment() {
                 ViewModelProvider(this).get(NewRecipeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_new_recipe, container, false)
 
-        val ll = root.findViewById<TableLayout>(R.id.tableLayoutNewRecipe)
-        val addButton = root.findViewById<ImageButton>(R.id.buttonAddIngredient)
+        val li = root.findViewById<TableLayout>(R.id.tableLayoutNewRecipe)
+        val ls = root.findViewById<TableLayout>(R.id.tableLayoutInstructions)
+        val addIngredientButton = root.findViewById<ImageButton>(R.id.buttonAddIngredient)
+        val addStepButton = root.findViewById<ImageButton>(R.id.buttonAddStep)
 
-        addButton.setOnClickListener{
-            val ingredient = getNewIngredient(ll)
+        addIngredientButton.setOnClickListener{
+            val ingredient = getNewIngredient(li)
             newRecipeViewModel.addIngredient(ingredient)
         }
 
+        addStepButton.setOnClickListener{
+            val step = getNewStep(ls)
+            newRecipeViewModel.addStep(step)
+        }
+
         newRecipeViewModel.ingredients.observe(viewLifecycleOwner, Observer{
-            modelChanged(ll, it)
+            modelChangedIngredients(li, it)
+        })
+
+        newRecipeViewModel.steps.observe(viewLifecycleOwner, Observer{
+            modelChangedSteps(ls, it)
         })
         return root
     }
 
-    private fun modelChanged(ll: TableLayout, ingredients : List<Ingredient>)
+
+
+    private fun modelChangedIngredients(ingredientTable: TableLayout, ingredients : List<Ingredient>)
     {
         // -2: do not remove the editable fields for the next ingredient
-        ll.removeViews(1, ll.childCount - 2)
-        ingredients.forEach{ x -> addRow(ll, x)}
+        ingredientTable.removeViews(1, ingredientTable.childCount - 2)
+        ingredients.forEach{ x -> addIngredientToGUI(ingredientTable, x)}
+    }
+
+    private fun modelChangedSteps(stepTable: TableLayout, steps : List<Step>)
+    {
+        stepTable.removeViews(1, stepTable.childCount - 2)
+        steps.forEach{ x -> addStepToGUI(stepTable, x)}
     }
 
     private fun getNewIngredient(ll: TableLayout) : Ingredient
@@ -62,9 +80,15 @@ class NewRecipeFragment : Fragment() {
         return newIngredient
     }
 
+    private fun getNewStep(ll: TableLayout) : Step
+    {
+        val entry = ll.rootView.findViewById<EditText>(R.id.editTextStep)
+        val newStep = Step(entry.text.toString(), 0)
+        entry.text.clear()
+        return newStep
+    }
 
-
-    private fun addRow(ll: TableLayout, ingredient: Ingredient)
+    private fun addIngredientToGUI(ll: TableLayout, ingredient: Ingredient)
     {
         val row = TableRow(context)
 
@@ -97,6 +121,24 @@ class NewRecipeFragment : Fragment() {
         newEntry[2].textAlignment = View.TEXT_ALIGNMENT_TEXT_START
         getLayoutParams(newEntry[2]).leftMargin = 40
         getLayoutParams(newEntry[2]).weight += spaceHeader.weight
+
+        ll.addView(row, ll.childCount-1)
+    }
+
+    private fun addStepToGUI(ll: TableLayout, step: Step)
+    {
+        val row = TableRow(context)
+        val lp: TableRow.LayoutParams =
+            TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT)
+        row.layoutParams = lp
+
+        val entry = TextView(context)
+        entry.text = step.description
+
+        row.addView(entry)
+        entry.textSize = 18f
+        entry.textAlignment = View.TEXT_ALIGNMENT_TEXT_START
+        entry.width = ll.rootView.findViewById<TextView>(R.id.textViewStep).width
 
         ll.addView(row, ll.childCount-1)
     }

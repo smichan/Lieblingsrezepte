@@ -8,7 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sophieslieblingsrezepte.R
 import android.widget.*
-import androidx.lifecycle.Observer
+import com.example.sophieslieblingsrezepte.data.Result
+import com.example.sophieslieblingsrezepte.ui.serverConnection.ServerConnector
 
 
 class NewRecipeFragment : Fragment() {
@@ -28,10 +29,13 @@ class NewRecipeFragment : Fragment() {
         val ls = root.findViewById<TableLayout>(R.id.tableLayoutInstructions)
         val addIngredientButton = root.findViewById<ImageButton>(R.id.buttonAddIngredient)
         val addStepButton = root.findViewById<ImageButton>(R.id.buttonAddStep)
+        val addNewRecipeButton = root.findViewById<Button>(R.id.buttonAddNewRecipe)
+        val recipeNameEditText = root.findViewById<EditText>(R.id.textRecipeTitle)
 
         addIngredientButton.setOnClickListener{
             val ingredient = getNewIngredient(li)
             newRecipeViewModel.addIngredient(ingredient)
+
         }
 
         addStepButton.setOnClickListener{
@@ -39,17 +43,49 @@ class NewRecipeFragment : Fragment() {
             newRecipeViewModel.addStep(step)
         }
 
-        newRecipeViewModel.ingredients.observe(viewLifecycleOwner, Observer{
+        addNewRecipeButton.setOnClickListener{
+            var recipeName = recipeNameEditText.text.toString()
+            newRecipeViewModel.setName(recipeName)
+
+            val token = requireActivity().intent.getStringExtra("Token")
+
+            val serverConnector = ServerConnector(token!!)
+            var resultSuccess = serverConnector.saveNewRecipe(newRecipeViewModel)
+
+            if (resultSuccess is Result.Success)
+            {
+                println("Recipe created successful")
+                Toast.makeText(
+                    context,
+                    recipeName + " has been created successful!",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            else
+            {
+                Toast.makeText(
+                    context,
+                    "Something went wrong. Please check your input and try again.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+        }
+
+        newRecipeViewModel.ingredients.observe(viewLifecycleOwner, {
             modelChangedIngredients(li, it)
         })
 
-        newRecipeViewModel.steps.observe(viewLifecycleOwner, Observer{
+        newRecipeViewModel.steps.observe(viewLifecycleOwner, {
             modelChangedSteps(ls, it)
         })
+
+        newRecipeViewModel.name.observe(viewLifecycleOwner, {
+            recipeNameEditText.setText(it)
+        })
+
         return root
     }
-
-
 
     private fun modelChangedIngredients(ingredientTable: TableLayout, ingredients : List<Ingredient>)
     {
@@ -107,7 +143,7 @@ class NewRecipeFragment : Fragment() {
         )
         newEntry[0].text = ingredient.amount
         newEntry[1].text = ingredient.unit
-        newEntry[2].text = ingredient.ingredient
+        newEntry[2].text = ingredient.ingredientName
 
         for (i: Int in 0..2)
         {
@@ -115,7 +151,7 @@ class NewRecipeFragment : Fragment() {
             getLayoutParams(newEntry[i]).weight = getLayoutParams(oldEntry[i]).weight
             newEntry[i].textSize = 18f
             newEntry[i].textAlignment = View.TEXT_ALIGNMENT_CENTER
-            newEntry[i].setSingleLine(i<2)
+            newEntry[i].isSingleLine = i<2
             newEntry[i].width = ViewGroup.LayoutParams.MATCH_PARENT
         }
         newEntry[2].textAlignment = View.TEXT_ALIGNMENT_TEXT_START

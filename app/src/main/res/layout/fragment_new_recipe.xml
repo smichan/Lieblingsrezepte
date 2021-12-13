@@ -22,6 +22,7 @@
                 android:layout_height="match_parent">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/textRecipeTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/purple_200"
@@ -232,7 +233,7 @@
                 </TableLayout>
 
                 <Button
-                    android:id="@+id/button"
+                    android:id="@+id/buttonAddNewRecipe"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/purple_200"

@@ -46,20 +46,20 @@ class NewRecipeFragment : Fragment() {
         }
 
         addNewRecipeButton.setOnClickListener{
-            var recipeName = recipeNameEditText.text.toString()
+            val recipeName = recipeNameEditText.text.toString()
             newRecipeViewModel.setName(recipeName)
 
             val token = requireActivity().intent.getStringExtra("Token")
 
             val serverConnector = ServerConnector(token!!)
-            var resultSuccess = serverConnector.saveNewRecipe(newRecipeViewModel)
+            val resultSuccess = serverConnector.saveNewRecipe(newRecipeViewModel.recipe)
 
             if (resultSuccess is Result.Success)
             {
                 println("Recipe created successful")
                 Toast.makeText(
                     context,
-                    recipeName + " has been created successful!",
+                    "Saving ${newRecipeViewModel.recipe.name} was successful!",
                     Toast.LENGTH_LONG
                 ).show()
             }

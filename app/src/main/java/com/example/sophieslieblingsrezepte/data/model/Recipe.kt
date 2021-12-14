@@ -1,13 +1,23 @@
 package com.example.sophieslieblingsrezepte.data.model
 
-class Recipe(name: String)
+import androidx.lifecycle.MutableLiveData
+
+class Recipe(var name: String)
 {
-    var name: String = name
     var recipeId: Int? = null
     var ingredients: List<Ingredient> = listOf()
     var steps: List<Step> = listOf()
 
 
+    fun addStep(step: Step)
+    {
+        steps = steps.plus(step)
+    }
+
+    fun addIngredient(ingredient: Ingredient)
+    {
+        ingredients = ingredients.plus(ingredient)
+    }
 }
 
 

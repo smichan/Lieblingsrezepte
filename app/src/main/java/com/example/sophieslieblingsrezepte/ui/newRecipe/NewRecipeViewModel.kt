@@ -2,73 +2,71 @@ package com.example.sophieslieblingsrezepte.ui.newRecipe
 
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.sophieslieblingsrezepte.R
 import com.example.sophieslieblingsrezepte.data.model.Ingredient
+import com.example.sophieslieblingsrezepte.data.model.Recipe
 import com.example.sophieslieblingsrezepte.data.model.Step
 import com.example.sophieslieblingsrezepte.ui.serverConnection.ServerConnector
 import org.json.JSONObject
 
 class NewRecipeViewModel : ViewModel() {
+
+
     private val _ingredients = MutableLiveData<List<Ingredient>>(listOf())
     private val _steps = MutableLiveData<List<Step>>(listOf())
     private val _name = MutableLiveData<String>()
+
     private var _nextStepNo = 0
+    var recipe: Recipe = Recipe("New Recipe")
 
     // livedata to observe changes
     val ingredients: LiveData<List<Ingredient>> = _ingredients
     val steps: LiveData<List<Step>> = _steps
     val name: LiveData<String> = _name
 
-    fun setName(name: String)
+    fun setName(name: String?)
     {
-        _name.value = name
+        if (!name.isNullOrEmpty())
+        {
+            recipe.name = name
+            _name.value = recipe.name
+        }
     }
 
     fun addIngredient(ingredient: Ingredient)
     {
-        var list = _ingredients.value
-        list = list?.plus(ingredient)
-
-        _ingredients.value = list!!
+        recipe.addIngredient(ingredient)
+        _ingredients.value = recipe.ingredients
     }
 
     fun addStep(step: Step)
     {
-        var list = _steps.value
         step.order = _nextStepNo
         countStepUp()
-        list = list?.plus(step)
-        _steps.value = list!!
+        recipe.addStep(step)
+        _steps.value = recipe.steps
+
     }
+
     fun setServerId(id: Int?, ingredient: Ingredient)
     {
         ingredient.serverId = id
-        var list = _ingredients.value?.toMutableList()
-        val index = list?.indexOf(ingredient)
-        if (index != null)
-        {
-            list?.set(index, ingredient)
-            _ingredients.value = list!!
-        }
+        //recipe.replaceIngredient(ingredient)
+        _ingredients.value = recipe.ingredients
     }
 
     fun setServerId(id: Int?, step: Step)
     {
         step.serverId = id
-        var list = _steps.value?.toMutableList()
-
-        val index = list?.indexOf(step)
-        if (index != null)
-        {
-            list?.set(index, step)
-            _steps.value = list!!
-        }
+        //recipe.replaceStep(step)
+        _steps.value = recipe.steps
     }
 
-    fun countStepUp()
+    private fun countStepUp()
     {
         _nextStepNo += 1
     }

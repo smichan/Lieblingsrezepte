@@ -1,6 +1,7 @@
 package com.example.sophieslieblingsrezepte.ui.serverConnection
 
 import com.example.sophieslieblingsrezepte.data.Result
+import com.example.sophieslieblingsrezepte.data.model.Recipe
 import com.example.sophieslieblingsrezepte.ui.newRecipe.NewRecipeViewModel
 import org.json.JSONObject
 import java.io.IOException
@@ -16,22 +17,22 @@ class ServerConnector(private val _token: String?) {
     private val _sharingruleUrl = URL("https://cookbook.norsecorby.de/v1/SharingRule")
     private val _pictureUrl = URL("https://cookbook.norsecorby.de/v1/picture")
 
-    fun saveNewRecipe(newRecipeViewModel: NewRecipeViewModel) : Result<Boolean> {
+    fun saveNewRecipe(recipe: Recipe) : Result<Boolean> {
         try
         {
-            val recipeId = saveRecipeAsJson(recipeAsJson(newRecipeViewModel.name.value))
+            val recipeId = saveRecipeAsJson(recipeAsJson(recipe.name))
 
-            var iterationIngredients = newRecipeViewModel.ingredients
-            for (ingredient in iterationIngredients.value!!)
+            var iterationIngredients = recipe.ingredients
+            for (ingredient in iterationIngredients)
             {
                 val ingredientId = saveIngredientAsJson(ingredientAsJson(ingredient.ingredientName, recipeId, ingredient.amount, ingredient.unit))
-                newRecipeViewModel.setServerId(ingredientId, ingredient)
+                ingredient.serverId = ingredientId
             }
-            var iterationSteps = newRecipeViewModel.steps
-            for (step in iterationSteps.value!!)
+            var iterationSteps = recipe.steps
+            for (step in iterationSteps)
             {
                 val stepId = saveStepAsJson(stepAsJson(step.description, recipeId, step.order))
-                newRecipeViewModel.setServerId(stepId, step)
+                step.serverId = stepId
             }
         }
         catch (e: Throwable)

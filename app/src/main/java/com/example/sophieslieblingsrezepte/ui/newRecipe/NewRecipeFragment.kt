@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.sophieslieblingsrezepte.R
 import android.widget.*
 import com.example.sophieslieblingsrezepte.data.Result
+import com.example.sophieslieblingsrezepte.data.model.Ingredient
+import com.example.sophieslieblingsrezepte.data.model.Step
 import com.example.sophieslieblingsrezepte.ui.serverConnection.ServerConnector
 
 

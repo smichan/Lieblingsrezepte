@@ -1,5 +1,7 @@
 package com.example.sophieslieblingsrezepte.ui.dashboard
 
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,7 @@ import com.example.sophieslieblingsrezepte.R
 import com.example.sophieslieblingsrezepte.data.CreateList
 import com.example.sophieslieblingsrezepte.data.GalleryAdapter
 import com.example.sophieslieblingsrezepte.databinding.FragmentDashboardBinding
+import com.example.sophieslieblingsrezepte.ui.serverConnection.ServerConnector
 
 
 class DashboardFragment : Fragment() {
@@ -19,13 +22,13 @@ class DashboardFragment : Fragment() {
     private lateinit var dashboardViewModel: DashboardViewModel
 
     private final var image_titles: Array<String> =
-            arrayOf("January", "February", "March", "April", "May")
-    private final var image_ids: IntArray =
+            arrayOf("January")
+    /*private final var image_ids: IntArray =
             intArrayOf(R.drawable.img1,
             R.drawable.img2,
             R.drawable.img3,
             R.drawable.img4,
-            R.drawable.img5)
+            R.drawable.img5)*/
 
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
@@ -52,9 +55,15 @@ class DashboardFragment : Fragment() {
     }
 
     private fun prepareData(): ArrayList<CreateList> {
+
+        val token = requireActivity().intent.getStringExtra("Token")
+        val serverConnector = ServerConnector(token!!)
+        val bitmap = serverConnector.getPicture()
+        val drawable = BitmapDrawable(resources, bitmap)
+
         val images: ArrayList<CreateList> = ArrayList()
         for (i in image_titles.indices) {
-            val createList = CreateList(image_titles[i], image_ids[i])
+            val createList = CreateList(image_titles[i], drawable)
             images.add(createList)
         }
         return images
@@ -64,6 +73,5 @@ class DashboardFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }
 

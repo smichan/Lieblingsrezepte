@@ -1,9 +1,15 @@
 package com.example.sophieslieblingsrezepte.ui.serverConnection
 
+import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import androidx.core.graphics.drawable.toDrawable
 import com.example.sophieslieblingsrezepte.data.Result
 import com.example.sophieslieblingsrezepte.data.model.Recipe
 import com.example.sophieslieblingsrezepte.ui.newRecipe.NewRecipeViewModel
 import org.json.JSONObject
+import java.io.File
 import java.io.IOException
 import java.lang.Exception
 import java.net.HttpURLConnection
@@ -62,6 +68,43 @@ class ServerConnector(private val _token: String?) {
         return stepBody.get("id") as Int?
     }
 
+
+
+
+
+    fun recipeAsJson(name: String?, preparationTime: Int? = null, cookingTime: Int? = null, note: String? = null, mainPictureId: Int? = null): JSONObject
+    {
+        var json = JSONObject()
+        json.put("name", name)
+        json.put("preparationTime", preparationTime)
+        json.put("cookingTime", cookingTime)
+        json.put("note", note)
+        json.put("mainPictureId",mainPictureId)
+        return json
+    }
+
+    fun ingredientAsJson(name: String?, recipeId: Int?, amount: String?, unit: String?, optional: Boolean? = false, pictureId: Int? = null): JSONObject
+    {
+        val intAmount = amount?.toInt()
+        var json = JSONObject()
+        json.put("name", name)
+        json.put("amount", intAmount)
+        json.put("unit", unit)
+        json.put("optional", optional)
+        json.put("pictureId", pictureId)
+        json.put("recipeId", recipeId)
+        return json
+    }
+
+    fun stepAsJson(description: String?, recipeId: Int?, stepNo: Int? = null): JSONObject
+    {
+        var json = JSONObject()
+        json.put("description", description)
+        json.put("stepNo", stepNo)
+        json.put("recipeId", recipeId)
+        return json
+    }
+
     fun putJson(json: JSONObject, url: URL): JSONObject
     {
         var body: JSONObject
@@ -102,38 +145,54 @@ class ServerConnector(private val _token: String?) {
         return body
     }
 
-
-
-    fun recipeAsJson(name: String?, preparationTime: Int? = null, cookingTime: Int? = null, note: String? = null, mainPictureId: Int? = null): JSONObject
+    fun getPicture(): Bitmap
     {
-        var json = JSONObject()
-        json.put("name", name)
-        json.put("preparationTime", preparationTime)
-        json.put("cookingTime", cookingTime)
-        json.put("note", note)
-        json.put("mainPictureId",mainPictureId)
-        return json
-    }
+        //var body: JSONObject
+        var output: ByteArray
+        val url1 = URL("https://cookbook.norsecorby.de/v1/picture/6")
+        //val url2 = URL("https://cookbook.norsecorby.de/v1/picture/7")
 
-    fun ingredientAsJson(name: String?, recipeId: Int?, amount: String?, unit: String?, optional: Boolean? = false, pictureId: Int? = null): JSONObject
-    {
-        val intAmount = amount?.toInt()
-        var json = JSONObject()
-        json.put("name", name)
-        json.put("amount", intAmount)
-        json.put("unit", unit)
-        json.put("optional", optional)
-        json.put("pictureId", pictureId)
-        json.put("recipeId", recipeId)
-        return json
-    }
+        try {
+            val future: CompletableFuture<ByteArray>? = CompletableFuture.supplyAsync{
+                //var responseBody = JSONObject("{}")
+                var response = ByteArray(0)
+                val connection = url1.openConnection() as HttpURLConnection
+                try {
+                    val bearer = "Bearer $_token"
+                    connection.requestMethod = "GET"
+                    connection.setRequestProperty("Authorization", bearer)
+                    connection.setRequestProperty("Accept", "application/json")
+                    val responseCode = connection.responseCode
+                    val contentLength = connection.contentLength
+                    println(responseCode)
+                    //response = ByteArray(contentLength)
+                    response = connection.inputStream.buffered().use { it.readBytes() }
+                    println(contentLength)
 
-    fun stepAsJson(description: String?, recipeId: Int?, stepNo: Int? = null): JSONObject
-    {
-        var json = JSONObject()
-        json.put("description", description)
-        json.put("stepNo", stepNo)
-        json.put("recipeId", recipeId)
-        return json
+
+                    //responseBody = JSONObject(response)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                finally {
+                    connection.disconnect()
+                }
+                return@supplyAsync response
+            }
+            if (future != null) {
+                //body = future.get()
+                output = future.get()
+            }
+            else
+            {
+                throw IOException("No value returned")
+            }
+        } catch (e: Throwable) {
+            throw IOException("Server access failed", e)
+        }
+
+        val bitmap = BitmapFactory.decodeByteArray(output, 0, output.size)
+        //return body
+        return bitmap
     }
 }

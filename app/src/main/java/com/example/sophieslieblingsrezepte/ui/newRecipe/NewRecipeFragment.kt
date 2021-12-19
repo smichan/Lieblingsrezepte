@@ -67,7 +67,8 @@ class NewRecipeFragment : Fragment() {
             {
                 Toast.makeText(
                     context,
-                    "Something went wrong. Please check your input and try again.",
+                    "Something went wrong. Please check your" +
+                            " input and try again.",
                     Toast.LENGTH_LONG
                 ).show()
             }

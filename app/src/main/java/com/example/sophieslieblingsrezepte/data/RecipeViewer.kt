@@ -23,7 +23,6 @@ class RecipeViewer : AppCompatActivity() {
 
         binding = ActivityRecipeViewerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setSupportActionBar(binding.toolbar)
 
         val jsonString = intent.getStringExtra("Json")
@@ -31,7 +30,7 @@ class RecipeViewer : AppCompatActivity() {
         val recipeTitle = jsonObject.getString("name")
         var recipe = Recipe(recipeTitle)
         recipe.fromJson(jsonObject)
-
+        binding.toolbar.title = recipeTitle
         val navController = findNavController(R.id.nav_host_fragment_content_recipe_viewer)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)

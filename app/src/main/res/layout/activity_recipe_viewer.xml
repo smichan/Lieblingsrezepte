@@ -21,7 +21,9 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_recipe_viewer" />
+    <include
+        android:id="@+id/fragmentLayout"
+        layout="@layout/content_recipe_viewer" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

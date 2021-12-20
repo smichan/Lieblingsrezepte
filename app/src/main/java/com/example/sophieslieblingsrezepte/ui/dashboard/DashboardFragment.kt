@@ -1,18 +1,20 @@
 package com.example.sophieslieblingsrezepte.ui.dashboard
 
+import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.sophieslieblingsrezepte.R
-import com.example.sophieslieblingsrezepte.data.CreateList
+import com.example.sophieslieblingsrezepte.MainActivity
+import com.example.sophieslieblingsrezepte.data.GalleryImage
 import com.example.sophieslieblingsrezepte.data.GalleryAdapter
+import com.example.sophieslieblingsrezepte.data.RecipeViewer
 import com.example.sophieslieblingsrezepte.databinding.FragmentDashboardBinding
 import com.example.sophieslieblingsrezepte.ui.serverConnection.ServerConnector
 
@@ -21,14 +23,6 @@ class DashboardFragment : Fragment() {
 
     private lateinit var dashboardViewModel: DashboardViewModel
 
-    private final var image_titles: Array<String> =
-            arrayOf("January")
-    /*private final var image_ids: IntArray =
-            intArrayOf(R.drawable.img1,
-            R.drawable.img2,
-            R.drawable.img3,
-            R.drawable.img4,
-            R.drawable.img5)*/
 
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
@@ -48,25 +42,46 @@ class DashboardFragment : Fragment() {
         binding.galleryRecipe.setHasFixedSize(true)
         val layoutManager: RecyclerView.LayoutManager = GridLayoutManager(context, 2)
         binding.galleryRecipe.layoutManager = layoutManager
-        val createLists: ArrayList<CreateList> = prepareData()
-        val adapter: GalleryAdapter = GalleryAdapter(context, createLists)
+        val galleryImages: ArrayList<GalleryImage> = prepareData()
+
+        val token = requireActivity().intent.getStringExtra("Token")
+
+        val adapter = GalleryAdapter(context, galleryImages)
         binding.galleryRecipe.adapter = adapter
+
+        adapter.clicked.observe(viewLifecycleOwner, Observer {
+            val galleryPosition = it ?: return@Observer
+            val recipeId = galleryImages[galleryPosition].recipe_id
+            loadRecipe(recipeId)
+        })
+
         return root
     }
 
-    private fun prepareData(): ArrayList<CreateList> {
+    private fun prepareData(): ArrayList<GalleryImage> {
 
         val token = requireActivity().intent.getStringExtra("Token")
         val serverConnector = ServerConnector(token!!)
-        val bitmap = serverConnector.getPicture()
-        val drawable = BitmapDrawable(resources, bitmap)
+        val recipeOverview = serverConnector.searchRecipes()
 
-        val images: ArrayList<CreateList> = ArrayList()
-        for (i in image_titles.indices) {
-            val createList = CreateList(image_titles[i], drawable)
-            images.add(createList)
+        val galleryList: ArrayList<GalleryImage> = ArrayList()
+        for (i in 0 until recipeOverview.recipeIds.size)
+        {
+            val picture = serverConnector.getPicture(recipeOverview.recipes[i].pictureId)
+
+            galleryList.add(GalleryImage(recipeOverview.recipeIds[i], recipeOverview.recipes[i].name, picture))
         }
-        return images
+        return galleryList
+    }
+
+    private fun loadRecipe(recipeId: Int)
+    {
+        val token = requireActivity().intent.getStringExtra("Token")
+        val serverConnector = ServerConnector(token!!)
+        val json = serverConnector.getRecipe(recipeId)
+        val intent = Intent(context, RecipeViewer::class.java)
+        intent.putExtra("Json", json.toString());
+        this.startActivity(intent)
     }
 
     override fun onDestroyView() {

@@ -102,15 +102,11 @@ class LoginActivity : AppCompatActivity() {
 
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome)
-        val token = model.token
-        // TODO : initiate successful logged in experience
         Toast.makeText(
             applicationContext,
             "$welcome",
             Toast.LENGTH_LONG
         ).show()
-
-        Log.d("tag","$welcome")
 
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.putExtra("Token", model.token);

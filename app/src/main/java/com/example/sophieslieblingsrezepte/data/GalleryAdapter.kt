@@ -1,20 +1,30 @@
 package com.example.sophieslieblingsrezepte.data
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
+import com.example.sophieslieblingsrezepte.MainActivity
 import com.example.sophieslieblingsrezepte.R
+import com.example.sophieslieblingsrezepte.ui.login.LoginFormState
+import com.example.sophieslieblingsrezepte.ui.serverConnection.ServerConnector
 
 
-class GalleryAdapter(context: Context?, galleryList: ArrayList<CreateList>) : RecyclerView.Adapter<GalleryAdapter.ViewHolder>() {
+class GalleryAdapter(context: Context?, galleryList: ArrayList<GalleryImage>) : RecyclerView.Adapter<GalleryAdapter.ViewHolder>() {
 
-    private var galleryList: ArrayList<CreateList> = galleryList
+    private var galleryList: ArrayList<GalleryImage> = galleryList
     private var context: Context? = context
+
+    private val _clicked = MutableLiveData<Int>()
+    val clicked: LiveData<Int> = _clicked
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
         val view: View = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.gallery_image, viewGroup, false)
@@ -22,14 +32,20 @@ class GalleryAdapter(context: Context?, galleryList: ArrayList<CreateList>) : Re
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
-        viewHolder.title.setText(galleryList.get(i).image_title)
+        viewHolder.title.setText(galleryList.get(i).picture_title)
         viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP)
-        viewHolder.img.setImageDrawable(galleryList.get(i).image_drawable)
-        //viewHolder.img.setImageResource(galleryList.get(i).image_id)
-
+        val bitmap = galleryList.get(i).picture_bitmap
+        if (bitmap != null)
+        {
+            viewHolder.img.setImageBitmap(bitmap)
+        }
+        else
+        {
+            viewHolder.img.setImageResource(R.drawable.missing_image)
+        }
 
         viewHolder.img.setOnClickListener(View.OnClickListener {
-            Toast.makeText(context,"Image",Toast.LENGTH_SHORT).show()
+            _clicked.value = i
         })
     }
 

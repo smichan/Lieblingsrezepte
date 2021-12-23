@@ -54,7 +54,7 @@
                     android:background="?android:attr/listDivider" />
 
                 <TableLayout
-                    android:id="@+id/tableLayoutNewRecipe"
+                    android:id="@+id/tableLayoutShowRecipe"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -174,7 +174,7 @@
                     android:background="?android:attr/listDivider" />
 
                 <TableLayout
-                    android:id="@+id/tableLayoutInstructions"
+                    android:id="@+id/tableLayoutDirections"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 

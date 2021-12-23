@@ -16,19 +16,19 @@ import com.example.sophieslieblingsrezepte.ui.serverConnection.ServerConnector
 
 class NewRecipeFragment : Fragment() {
 
-    private lateinit var newRecipeViewModel: NewRecipeViewModel
+    private lateinit var _newRecipeViewModel: NewRecipeViewModel
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        newRecipeViewModel =
+        _newRecipeViewModel =
                 ViewModelProvider(this).get(NewRecipeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_new_recipe, container, false)
 
-        val li = root.findViewById<TableLayout>(R.id.tableLayoutNewRecipe)
-        val ls = root.findViewById<TableLayout>(R.id.tableLayoutInstructions)
+        val li = root.findViewById<TableLayout>(R.id.tableLayoutShowRecipe)
+        val ls = root.findViewById<TableLayout>(R.id.tableLayoutDirections)
         val addIngredientButton = root.findViewById<ImageButton>(R.id.buttonAddIngredient)
         val addStepButton = root.findViewById<ImageButton>(R.id.buttonAddStep)
         val addNewRecipeButton = root.findViewById<Button>(R.id.buttonAddNewRecipe)
@@ -36,30 +36,30 @@ class NewRecipeFragment : Fragment() {
 
         addIngredientButton.setOnClickListener{
             val ingredient = getNewIngredient(li)
-            newRecipeViewModel.addIngredient(ingredient)
+            _newRecipeViewModel.addIngredient(ingredient)
 
         }
 
         addStepButton.setOnClickListener{
             val step = getNewStep(ls)
-            newRecipeViewModel.addStep(step)
+            _newRecipeViewModel.addStep(step)
         }
 
         addNewRecipeButton.setOnClickListener{
             val recipeName = recipeNameEditText.text.toString()
-            newRecipeViewModel.setName(recipeName)
+            _newRecipeViewModel.setName(recipeName)
 
             val token = requireActivity().intent.getStringExtra("Token")
 
             val serverConnector = ServerConnector(token!!)
-            val resultSuccess = serverConnector.saveNewRecipe(newRecipeViewModel.recipe)
+            val resultSuccess = serverConnector.saveNewRecipe(_newRecipeViewModel.recipe)
 
             if (resultSuccess is Result.Success)
             {
                 println("Recipe created successful")
                 Toast.makeText(
                     context,
-                    "Saving ${newRecipeViewModel.recipe.name} was successful!",
+                    "Saving ${_newRecipeViewModel.recipe.name} was successful!",
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -75,18 +75,17 @@ class NewRecipeFragment : Fragment() {
 
         }
 
-        newRecipeViewModel.ingredients.observe(viewLifecycleOwner, {
+        _newRecipeViewModel.ingredients.observe(viewLifecycleOwner, {
             modelChangedIngredients(li, it)
         })
 
-        newRecipeViewModel.steps.observe(viewLifecycleOwner, {
+        _newRecipeViewModel.steps.observe(viewLifecycleOwner, {
             modelChangedSteps(ls, it)
         })
 
-        newRecipeViewModel.name.observe(viewLifecycleOwner, {
+        _newRecipeViewModel.name.observe(viewLifecycleOwner, {
             recipeNameEditText.setText(it)
         })
-
         return root
     }
 
@@ -144,7 +143,7 @@ class NewRecipeFragment : Fragment() {
             ll.rootView.findViewById(R.id.editTextUnit),
             ll.rootView.findViewById(R.id.editTextIngredient)
         )
-        newEntry[0].text = ingredient.amount
+        newEntry[0].text = ingredient.amount.toString()
         newEntry[1].text = ingredient.unit
         newEntry[2].text = ingredient.ingredientName
 

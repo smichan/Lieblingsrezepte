@@ -52,20 +52,6 @@ class NewRecipeViewModel : ViewModel() {
 
     }
 
-    fun setServerId(id: Int?, ingredient: Ingredient)
-    {
-        ingredient.serverId = id
-        //recipe.replaceIngredient(ingredient)
-        _ingredients.value = recipe.ingredients
-    }
-
-    fun setServerId(id: Int?, step: Step)
-    {
-        step.serverId = id
-        //recipe.replaceStep(step)
-        _steps.value = recipe.steps
-    }
-
     private fun countStepUp()
     {
         _nextStepNo += 1

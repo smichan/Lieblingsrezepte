@@ -1,8 +1,7 @@
 package com.example.sophieslieblingsrezepte.data.model
 
-import androidx.lifecycle.MutableLiveData
+import android.icu.text.DecimalFormat
 import org.json.JSONObject
-import java.net.URL
 
 class Recipe(var name: String)
 {
@@ -29,12 +28,16 @@ class Recipe(var name: String)
         if (!json.isNull("ingredients")) {
             val ingredients = json.getJSONArray("ingredients")
             for (i in 0 until ingredients.length()) {
-                val newIngredient = Ingredient(
-                    getValueFromJson(json, "amount") as String,
-                    getValueFromJson(json, "unit") as String,
-                    getValueFromJson(json, "name") as String,
-                    getValueFromJson(json, "id") as Int
-                )
+                val ingredientJson = ingredients.get(i) as JSONObject
+                val amount = getValueFromJson(ingredientJson, "amount")
+                val df = DecimalFormat("#.##")
+                val amountdz = df.format(amount)
+                val unit = getValueFromJson(ingredientJson, "unit") as String
+                val ingredientName = getValueFromJson(ingredientJson, "name") as String
+                val ingredientId = getValueFromJson(ingredientJson, "id") as Int
+
+                val newIngredient = Ingredient(amountdz, unit, ingredientName, ingredientId)
+
                 this.addIngredient(newIngredient)
             }
         }
@@ -42,48 +45,17 @@ class Recipe(var name: String)
             val steps = json.getJSONArray("preparationSteps")
             for (i in 0 until steps.length())
             {
+                val stepJson = steps.get(i) as JSONObject
                 val newStep = Step(
-                    getValueFromJson(json, "description") as String,
-                    getValueFromJson(json, "stepNo") as Int,
-                    getValueFromJson(json, "id") as Int
+                    getValueFromJson(stepJson, "description") as String,
+                    getValueFromJson(stepJson, "stepNo") as Int,
+                    getValueFromJson(stepJson, "id") as Int
                 )
                 this.addStep(newStep)
             }
         }
     }
-/*
-    fun fromJson(json: JSONObject): Recipe
-    {
-        val recipe = Recipe(json.getString("name"))
-        recipe.recipeId = json.getInt("id")
-        recipe.pictureId = getValueFromJson(json, "mainPictureId") as Int?
-        if (!json.isNull("ingredients")) {
-            val ingredients = json.getJSONArray("ingredients")
-            for (i in 0 until ingredients.length()) {
-                val newIngredient = Ingredient(
-                    getValueFromJson(json, "amount") as String,
-                    getValueFromJson(json, "unit") as String,
-                    getValueFromJson(json, "name") as String,
-                    getValueFromJson(json, "id") as Int
-                )
-                recipe.addIngredient(newIngredient)
-            }
-        }
-        if (!json.isNull("preparationSteps")) {
-            val steps = json.getJSONArray("preparationSteps")
-            for (i in 0 until steps.length())
-            {
-                val newStep = Step(
-                    getValueFromJson(json, "description") as String,
-                    getValueFromJson(json, "stepNo") as Int,
-                    getValueFromJson(json, "id") as Int
-                )
-                recipe.addStep(newStep)
-            }
-        }
-        return recipe
-    }
-*/
+
     private fun getValueFromJson(json: JSONObject, name: String) : Any?
     {
         if (!json.isNull(name))
@@ -95,7 +67,7 @@ class Recipe(var name: String)
 }
 
 
-class Ingredient (amount: String, unit: String, ingredient: String, serverId: Int? = null)
+class Ingredient(amount: String, unit: String, ingredient: String, serverId: Int? = null)
 {
     public val amount: String = amount
     public val unit: String = unit

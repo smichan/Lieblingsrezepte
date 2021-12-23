@@ -28,8 +28,8 @@ class RecipeViewer : AppCompatActivity() {
         val jsonString = intent.getStringExtra("Json")
         val jsonObject = JSONObject(jsonString)
         val recipeTitle = jsonObject.getString("name")
-        var recipe = Recipe(recipeTitle)
-        recipe.fromJson(jsonObject)
+        /*var recipe = Recipe(recipeTitle)
+        recipe.fromJson(jsonObject)*/
 
         val navController = findNavController(R.id.nav_host_fragment_content_recipe_viewer)
         appBarConfiguration = AppBarConfiguration(navController.graph)
@@ -37,7 +37,7 @@ class RecipeViewer : AppCompatActivity() {
 
         //to set the recipe title, the toolbar title needs to be set after the fragment is loaded.
         binding.toolbar.title = recipeTitle
-        binding.fab.setOnClickListener { view ->
+        binding.editFab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }

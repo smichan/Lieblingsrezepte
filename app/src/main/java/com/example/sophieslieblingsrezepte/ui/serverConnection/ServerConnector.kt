@@ -1,20 +1,12 @@
 package com.example.sophieslieblingsrezepte.ui.serverConnection
 
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
-import androidx.collection.arrayMapOf
-import androidx.core.graphics.drawable.toDrawable
 import com.example.sophieslieblingsrezepte.data.Result
-import com.example.sophieslieblingsrezepte.data.model.Ingredient
 import com.example.sophieslieblingsrezepte.data.model.Recipe
 import com.example.sophieslieblingsrezepte.data.model.RecipeOverview
-import com.example.sophieslieblingsrezepte.data.model.Step
-import com.example.sophieslieblingsrezepte.ui.newRecipe.NewRecipeViewModel
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.File
 import java.io.IOException
 import java.lang.Exception
 import java.net.HttpURLConnection
@@ -293,12 +285,11 @@ class ServerConnector(private val _token: String?) {
         return json
     }
 
-    private fun ingredientAsJson(name: String?, recipeId: Int?, amount: String?, unit: String?, optional: Boolean? = false, pictureId: Int? = null): JSONObject
+    private fun ingredientAsJson(name: String?, recipeId: Int?, amount: String, unit: String?, optional: Boolean? = false, pictureId: Int? = null): JSONObject
     {
-        val intAmount = amount?.toInt()
         var json = JSONObject()
         json.put("name", name)
-        json.put("amount", intAmount)
+        json.put("amount", amount)
         json.put("unit", unit)
         json.put("optional", optional)
         json.put("pictureId", pictureId)

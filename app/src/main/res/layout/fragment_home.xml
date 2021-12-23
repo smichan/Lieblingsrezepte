@@ -7,11 +7,13 @@
     tools:context=".ui.home.HomeFragment">
 
     <Button
-        android:id="@+id/buttonDelete"
+        android:id="@+id/buttonDeleteAllRecipes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Delete all recipes"
-        tools:layout_editor_absoluteX="110dp"
-        tools:layout_editor_absoluteY="76dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -37,10 +37,7 @@ class RecipeViewer : AppCompatActivity() {
 
         //to set the recipe title, the toolbar title needs to be set after the fragment is loaded.
         binding.toolbar.title = recipeTitle
-        binding.editFab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

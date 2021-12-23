@@ -5,9 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.sophieslieblingsrezepte.R
 import com.example.sophieslieblingsrezepte.ui.serverConnection.ServerConnector
@@ -24,7 +22,7 @@ class HomeFragment : Fragment() {
         homeViewModel =
                 ViewModelProvider(this).get(HomeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-        val deleteButton = root.findViewById<Button>(R.id.buttonDelete)
+        val deleteButton = root.findViewById<Button>(R.id.buttonDeleteAllRecipes)
         deleteButton.setOnClickListener {
             deleteAllRecipes()
         }

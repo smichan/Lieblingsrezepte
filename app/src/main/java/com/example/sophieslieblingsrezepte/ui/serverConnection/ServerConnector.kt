@@ -46,7 +46,7 @@ class ServerConnector(private val _token: String?) {
         return Result.Success(true)
     }
 
-    fun loadRecipe(json: JSONObject, recipeOverview: RecipeOverview)
+    private fun loadRecipe(json: JSONObject, recipeOverview: RecipeOverview)
     {
         val id = json.get("id") as Int
         var pictureId: Int? = null
@@ -214,7 +214,51 @@ class ServerConnector(private val _token: String?) {
         return body
     }
 
+    fun deleteRecipe(id: Int)
+    {
+        delete(id, _recipeUrl)
+    }
 
+    fun delete(id: Int, url: URL)
+    {
+        val deleteURL= URL("$url/$id")
+        var body: JSONObject
+        try {
+            val future: CompletableFuture<JSONObject>? = CompletableFuture.supplyAsync{
+                var responseBody = JSONObject("{}")
+                val connection = deleteURL.openConnection() as HttpURLConnection
+                try {
+                    val bearer = "Bearer $_token"
+                    connection.requestMethod = "DELETE"
+                    connection.setRequestProperty("Authorization", bearer)
+                    connection.setRequestProperty("Content-Type", "application/json; utf-8")
+                    connection.setRequestProperty("Accept", "application/json")
+                    //connection.doOutput = true
+                    //connection.outputStream.bufferedWriter().use {it.write(json.toString())}
+                    val responseCode = connection.responseCode
+                    println(responseCode)
+                    val response = connection.inputStream.bufferedReader().use { it.readText() }
+                    responseBody = JSONObject(response)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                finally {
+                    connection.disconnect()
+                }
+                return@supplyAsync responseBody
+            }
+            if (future != null) {
+                body = future.get()
+            }
+            else
+            {
+                throw IOException("No value returned")
+            }
+        } catch (e: Throwable) {
+            throw IOException("Server access failed", e)
+        }
+
+    }
 
 
     fun getPicture(imageId: Int?): Bitmap?
@@ -305,6 +349,7 @@ class ServerConnector(private val _token: String?) {
         json.put("recipeId", recipeId)
         return json
     }
+
 
 
 

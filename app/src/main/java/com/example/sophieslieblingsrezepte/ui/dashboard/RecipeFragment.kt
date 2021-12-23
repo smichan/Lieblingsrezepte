@@ -26,7 +26,6 @@ class RecipeFragment : Fragment() {
         _binding = FragmentShowRecipeBinding.inflate(inflater, container, false)
         _viewModel = ViewModelProvider(this).get(RecipeViewModel::class.java)
 
-
         loadRecipe()
 
         return _binding.root

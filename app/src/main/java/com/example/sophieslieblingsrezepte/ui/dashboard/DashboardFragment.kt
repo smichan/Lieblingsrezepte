@@ -1,7 +1,6 @@
 package com.example.sophieslieblingsrezepte.ui.dashboard
 
 import android.content.Intent
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.sophieslieblingsrezepte.MainActivity
 import com.example.sophieslieblingsrezepte.data.GalleryImage
 import com.example.sophieslieblingsrezepte.data.GalleryAdapter
-import com.example.sophieslieblingsrezepte.data.RecipeViewer
 import com.example.sophieslieblingsrezepte.databinding.FragmentDashboardBinding
 import com.example.sophieslieblingsrezepte.ui.serverConnection.ServerConnector
 
@@ -43,8 +40,6 @@ class DashboardFragment : Fragment() {
         val layoutManager: RecyclerView.LayoutManager = GridLayoutManager(context, 2)
         binding.galleryRecipe.layoutManager = layoutManager
         val galleryImages: ArrayList<GalleryImage> = prepareData()
-
-        val token = requireActivity().intent.getStringExtra("Token")
 
         val adapter = GalleryAdapter(context, galleryImages)
         binding.galleryRecipe.adapter = adapter

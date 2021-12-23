@@ -1,4 +1,4 @@
-package com.example.sophieslieblingsrezepte.data
+package com.example.sophieslieblingsrezepte.ui.dashboard
 
 import android.os.Bundle
 import android.widget.Toolbar
@@ -30,11 +30,13 @@ class RecipeViewer : AppCompatActivity() {
         val recipeTitle = jsonObject.getString("name")
         var recipe = Recipe(recipeTitle)
         recipe.fromJson(jsonObject)
-        binding.toolbar.title = recipeTitle
+
         val navController = findNavController(R.id.nav_host_fragment_content_recipe_viewer)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
+        //to set the recipe title, the toolbar title needs to be set after the fragment is loaded.
+        binding.toolbar.title = recipeTitle
         binding.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()

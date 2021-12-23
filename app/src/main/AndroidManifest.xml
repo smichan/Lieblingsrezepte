@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SophiesLieblingsrezepte">
         <activity
-            android:name=".data.RecipeViewer"
+            android:name=".ui.dashboard.RecipeViewer"
             android:exported="true"
             android:label="@string/title_activity_recipe_viewer"
             android:theme="@style/Theme.SophiesLieblingsrezepte.NoActionBar" />

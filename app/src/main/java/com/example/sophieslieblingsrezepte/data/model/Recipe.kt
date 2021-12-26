@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.icu.text.DecimalFormat
 import org.json.JSONObject
 
-class Recipe(var name: String)
+class Recipe(var name: String? = null)
 {
     var recipeId: Int? = null
     var pictureId: Int? = null
@@ -24,7 +24,7 @@ class Recipe(var name: String)
 
     fun fromJson(json: JSONObject)
     {
-        this.recipeId = json.getInt("id")
+        this.recipeId = getValueFromJson(json, "id") as Int?
         this.pictureId = getValueFromJson(json, "mainPictureId") as Int?
         if (!json.isNull("ingredients")) {
             val ingredients = json.getJSONArray("ingredients")

@@ -222,6 +222,10 @@ class ServerConnector(private val _token: String?) {
 
     fun deleteRecipe(id: Int)
     {
+        val recipeJson = getRecipe(id)
+        val recipe = Recipe()
+        recipe.fromJson(recipeJson)
+
         delete(id, _recipeUrl)
     }
 

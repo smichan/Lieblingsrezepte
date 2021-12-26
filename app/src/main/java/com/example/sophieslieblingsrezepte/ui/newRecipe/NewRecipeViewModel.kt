@@ -1,5 +1,6 @@
 package com.example.sophieslieblingsrezepte.ui.newRecipe
 
+import android.graphics.Bitmap
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -14,7 +15,6 @@ import com.example.sophieslieblingsrezepte.ui.serverConnection.ServerConnector
 import org.json.JSONObject
 
 class NewRecipeViewModel : ViewModel() {
-
 
     private val _ingredients = MutableLiveData<List<Ingredient>>(listOf())
     private val _steps = MutableLiveData<List<Step>>(listOf())
@@ -50,6 +50,11 @@ class NewRecipeViewModel : ViewModel() {
         recipe.addStep(step)
         _steps.value = recipe.steps
 
+    }
+
+    fun setImage(bm: Bitmap)
+    {
+        recipe.addPicture(bm)
     }
 
     private fun countStepUp()

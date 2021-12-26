@@ -9,8 +9,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="160dp"
-        tools:layout_editor_absoluteY="-93dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="160dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,6 +37,20 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="8dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="@android:dimen/thumbnail_height"
+                        android:layout_height="@android:dimen/thumbnail_width"
+                        android:contextClickable="true"
+                        android:src="@drawable/missing_image"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
                     android:id="@+id/textIngredients"
@@ -103,6 +117,7 @@
                             android:layout_width="28dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1" />
+
                     </TableRow>
 
                     <TableRow

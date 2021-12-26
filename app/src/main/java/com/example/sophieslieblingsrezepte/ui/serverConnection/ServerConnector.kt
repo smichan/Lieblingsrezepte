@@ -7,6 +7,7 @@ import com.example.sophieslieblingsrezepte.data.model.Recipe
 import com.example.sophieslieblingsrezepte.data.model.RecipeOverview
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.lang.Exception
 import java.net.HttpURLConnection
@@ -24,7 +25,14 @@ class ServerConnector(private val _token: String?) {
     fun saveNewRecipe(recipe: Recipe) : Result<Boolean> {
         try
         {
-            val recipeId = saveRecipeAsJson(recipeAsJson(recipe.name))
+
+            if (recipe.mainPicture != null)
+            {
+                recipe.pictureId = setPicture(recipe.mainPicture!!)
+            }
+
+            val recipeId = saveRecipeAsJson(recipeAsJson(recipe.name, recipe.pictureId))
+
 
             var iterationIngredients = recipe.ingredients
             for (ingredient in iterationIngredients)
@@ -52,7 +60,7 @@ class ServerConnector(private val _token: String?) {
         var pictureId: Int? = null
         if (!json.isNull("mainPictureId"))
         {
-            pictureId = json.get("mainPictureId") as Int?
+            pictureId = json.get("mainPictureId") as Int
         }
 
         if (!recipeOverview.recipeIds.contains(id))
@@ -63,8 +71,6 @@ class ServerConnector(private val _token: String?) {
             recipe.pictureId = pictureId
             recipeOverview.recipes.add(recipe)
         }
-
-
     }
 
     fun searchRecipes() : RecipeOverview
@@ -219,12 +225,16 @@ class ServerConnector(private val _token: String?) {
         delete(id, _recipeUrl)
     }
 
-    fun delete(id: Int, url: URL)
+    fun deletePicture(id: Int)
+    {
+        delete(id, _pictureUrl)
+    }
+
+    private fun delete(id: Int, url: URL)
     {
         val deleteURL= URL("$url/$id")
-        var body: JSONObject
         try {
-            val future: CompletableFuture<JSONObject>? = CompletableFuture.supplyAsync{
+            CompletableFuture.supplyAsync{
                 var responseBody = JSONObject("{}")
                 val connection = deleteURL.openConnection() as HttpURLConnection
                 try {
@@ -233,8 +243,65 @@ class ServerConnector(private val _token: String?) {
                     connection.setRequestProperty("Authorization", bearer)
                     connection.setRequestProperty("Content-Type", "application/json; utf-8")
                     connection.setRequestProperty("Accept", "application/json")
-                    //connection.doOutput = true
-                    //connection.outputStream.bufferedWriter().use {it.write(json.toString())}
+
+                    val responseCode = connection.responseCode
+                    println(responseCode)
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                finally {
+                    connection.disconnect()
+                }
+                return@supplyAsync responseBody
+            }
+
+        } catch (e: Throwable) {
+            throw IOException("Server access failed", e)
+        }
+
+    }
+
+    fun setPicture(bm: Bitmap, imageId: Int? = null): Int
+    {
+        var result: JSONObject
+        if (imageId != null)
+        {
+            result = patchPicture(bm, imageId)
+        }
+        else
+        {
+            result = postPicture(bm)
+        }
+        val serverId = result.getInt("id")
+        return serverId
+    }
+
+    private fun patchPicture(bm: Bitmap, imageId: Int): JSONObject
+    {
+        return JSONObject("{}")
+    }
+
+    private fun postPicture(bm: Bitmap): JSONObject
+    {
+        val url = URL("$_pictureUrl")
+        val stream = ByteArrayOutputStream()
+        bm.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        val byteArray = stream.toByteArray()
+        var body: JSONObject
+        try {
+            val future: CompletableFuture<JSONObject>? = CompletableFuture.supplyAsync{
+                var responseBody = JSONObject("{}")
+                val connection = url.openConnection() as HttpURLConnection
+                try {
+                    val bearer = "Bearer $_token"
+                    connection.requestMethod = "POST"
+                    connection.setRequestProperty("Authorization", bearer)
+                    connection.setRequestProperty("Content-Type", "image/png")
+                    connection.setRequestProperty("Accept", "application/json")
+                    connection.doOutput = true
+                    connection.outputStream.buffered().use { it.write(byteArray) }
+
                     val responseCode = connection.responseCode
                     println(responseCode)
                     val response = connection.inputStream.bufferedReader().use { it.readText() }
@@ -257,9 +324,8 @@ class ServerConnector(private val _token: String?) {
         } catch (e: Throwable) {
             throw IOException("Server access failed", e)
         }
-
+        return body
     }
-
 
     fun getPicture(imageId: Int?): Bitmap?
     {
@@ -314,11 +380,7 @@ class ServerConnector(private val _token: String?) {
         return json
     }
 
-
-
-
-
-    private fun recipeAsJson(name: String?, preparationTime: Int? = null, cookingTime: Int? = null, note: String? = null, mainPictureId: Int? = null): JSONObject
+    private fun recipeAsJson(name: String?, mainPictureId: Int? = null, preparationTime: Int? = null, cookingTime: Int? = null, note: String? = null): JSONObject
     {
         var json = JSONObject()
         json.put("name", name)
@@ -349,8 +411,4 @@ class ServerConnector(private val _token: String?) {
         json.put("recipeId", recipeId)
         return json
     }
-
-
-
-
 }

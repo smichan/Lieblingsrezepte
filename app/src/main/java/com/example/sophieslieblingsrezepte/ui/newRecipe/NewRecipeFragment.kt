@@ -1,5 +1,6 @@
 package com.example.sophieslieblingsrezepte.ui.newRecipe
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,10 +14,33 @@ import com.example.sophieslieblingsrezepte.data.model.Ingredient
 import com.example.sophieslieblingsrezepte.data.model.Step
 import com.example.sophieslieblingsrezepte.ui.serverConnection.ServerConnector
 
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.provider.MediaStore
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.drawToBitmap
+
 
 class NewRecipeFragment : Fragment() {
 
     private lateinit var _newRecipeViewModel: NewRecipeViewModel
+    private lateinit var imageView: ImageView
+
+    // Receiver
+    private val getResult =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()) {
+            if(it.resultCode == Activity.RESULT_OK){
+                val value = it.data?.data
+                println(value)
+                if (value != null)
+                {
+                    imageView.setImageURI(value)
+                    _newRecipeViewModel.setImage(imageView.drawToBitmap())
+                }
+            }
+        }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -33,11 +57,16 @@ class NewRecipeFragment : Fragment() {
         val addStepButton = root.findViewById<ImageButton>(R.id.buttonAddStep)
         val addNewRecipeButton = root.findViewById<Button>(R.id.buttonAddNewRecipe)
         val recipeNameEditText = root.findViewById<EditText>(R.id.textRecipeTitle)
+        imageView = root.findViewById<ImageView>(R.id.imageView)
+
+        imageView.setOnClickListener{
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            getResult.launch(intent)
+        }
 
         addIngredientButton.setOnClickListener{
             val ingredient = getNewIngredient(li)
             _newRecipeViewModel.addIngredient(ingredient)
-
         }
 
         addStepButton.setOnClickListener{

@@ -38,6 +38,13 @@ class RecipeViewer : AppCompatActivity() {
         //to set the recipe title, the toolbar title needs to be set after the fragment is loaded.
         binding.toolbar.title = recipeTitle
 
+        binding.fabDelete.setOnClickListener{
+
+        }
+
+
+
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

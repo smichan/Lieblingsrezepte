@@ -47,6 +47,7 @@
                         android:layout_width="@android:dimen/thumbnail_height"
                         android:layout_height="@android:dimen/thumbnail_width"
                         android:contextClickable="true"
+                        android:padding="4pt"
                         android:src="@drawable/missing_image"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />

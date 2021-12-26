@@ -33,7 +33,7 @@ class RecipeFragment : Fragment() {
 
     private fun loadRecipe() {
         val jsonString = requireActivity().intent.getStringExtra("Json")
-        val jsonObject = JSONObject(jsonString)
+        val jsonObject = JSONObject(jsonString!!)
         _viewModel.addRecipe(jsonObject)
 
         val li = _binding.root.findViewById<TableLayout>(R.id.tableLayoutShowRecipe)

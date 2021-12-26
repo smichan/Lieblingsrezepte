@@ -126,26 +126,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/buttonEdit"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:backgroundTint="@color/purple_200"
-                    android:src="@drawable/icons8_pencil_32"
-                    tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck" />
-
-                <ImageButton
-                    android:id="@+id/buttonDelete"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:backgroundTint="@color/purple_200"
-                    android:src="@drawable/icons8_waste_32"
-                    tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck" />
-            </LinearLayout>
+                android:orientation="horizontal"/>
 
         </LinearLayout>
     </ScrollView>

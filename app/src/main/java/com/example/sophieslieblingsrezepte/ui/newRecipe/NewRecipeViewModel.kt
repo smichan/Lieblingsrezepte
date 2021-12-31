@@ -33,7 +33,7 @@ class NewRecipeViewModel : ViewModel() {
         if (!name.isNullOrEmpty())
         {
             recipe.name = name
-            _name.value = recipe.name
+            _name.value = recipe.name!!
         }
     }
 

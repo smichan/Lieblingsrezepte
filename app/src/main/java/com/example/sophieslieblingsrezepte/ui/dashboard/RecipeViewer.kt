@@ -11,6 +11,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.sophieslieblingsrezepte.R
 import com.example.sophieslieblingsrezepte.data.model.Recipe
 import com.example.sophieslieblingsrezepte.databinding.ActivityRecipeViewerBinding
+import com.example.sophieslieblingsrezepte.ui.serverConnection.ServerConnector
 import org.json.JSONObject
 
 class RecipeViewer : AppCompatActivity() {
@@ -28,8 +29,6 @@ class RecipeViewer : AppCompatActivity() {
         val jsonString = intent.getStringExtra("Json")
         val jsonObject = JSONObject(jsonString)
         val recipeTitle = jsonObject.getString("name")
-        /*var recipe = Recipe(recipeTitle)
-        recipe.fromJson(jsonObject)*/
 
         val navController = findNavController(R.id.nav_host_fragment_content_recipe_viewer)
         appBarConfiguration = AppBarConfiguration(navController.graph)
@@ -40,11 +39,15 @@ class RecipeViewer : AppCompatActivity() {
 
         binding.fabDelete.setOnClickListener{
 
+            val token = intent.getStringExtra("Token")
+            val jsonString = intent.getStringExtra("Json")
+            val jsonObject = JSONObject(jsonString)
+            val recipeId = jsonObject.getInt("id")
+            val serverConnector = ServerConnector(token!!)
+            serverConnector.deleteRecipe(recipeId)
+
+            this.finish()
         }
-
-
-
-
     }
 
     override fun onSupportNavigateUp(): Boolean {

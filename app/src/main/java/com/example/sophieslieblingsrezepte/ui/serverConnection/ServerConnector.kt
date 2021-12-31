@@ -225,8 +225,12 @@ class ServerConnector(private val _token: String?) {
         val recipeJson = getRecipe(id)
         val recipe = Recipe()
         recipe.fromJson(recipeJson)
-
         delete(id, _recipeUrl)
+        if (recipe.pictureId != null)
+        {
+            deletePicture(recipe.pictureId!!)
+        }
+
     }
 
     fun deletePicture(id: Int)

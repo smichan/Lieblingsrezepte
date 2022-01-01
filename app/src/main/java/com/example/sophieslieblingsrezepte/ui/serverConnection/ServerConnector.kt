@@ -402,21 +402,47 @@ class ServerConnector(private val _token: String?) {
     private fun ingredientAsJson(name: String?, recipeId: Int?, amount: String, unit: String?, optional: Boolean? = false, pictureId: Int? = null): JSONObject
     {
         var json = JSONObject()
-        json.put("name", name)
-        json.put("amount", amount)
-        json.put("unit", unit)
-        json.put("optional", optional)
-        json.put("pictureId", pictureId)
-        json.put("recipeId", recipeId)
+        putJson(json,"name", name)
+        putJson(json,"amount", amount)
+        putJson(json,"unit", unit)
+        putJson(json,"optional", optional)
+        putJson(json,"pictureId", pictureId)
+        putJson(json,"recipeId", recipeId)
         return json
     }
 
     private fun stepAsJson(description: String?, recipeId: Int?, stepNo: Int? = null): JSONObject
     {
         var json = JSONObject()
-        json.put("description", description)
-        json.put("stepNo", stepNo)
-        json.put("recipeId", recipeId)
+        putJson(json,"description", description)
+        putJson(json,"stepNo", stepNo)
+        putJson(json,"recipeId", recipeId)
         return json
+    }
+
+    private fun putJson(json: JSONObject, name: String, entry: String?)
+    {
+        if (entry != null && entry != "" && entry != "0")
+        {
+            json.put(name, entry)
+        }
+
+    }
+
+    private fun putJson(json: JSONObject, name: String, entry: Boolean?)
+    {
+        if (entry != null)
+        {
+            json.put(name, entry)
+        }
+
+    }
+    private fun putJson(json: JSONObject, name: String, entry: Int?)
+    {
+        if (entry != null && entry != 0)
+        {
+            json.put(name, entry)
+        }
+
     }
 }

@@ -1,20 +1,14 @@
-package com.example.sophieslieblingsrezepte.ui.newRecipe
+package com.example.sophieslieblingsrezepte.ui.editRecipe
 
 import android.graphics.Bitmap
-import android.view.View
-import android.widget.TextView
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.sophieslieblingsrezepte.R
 import com.example.sophieslieblingsrezepte.data.model.Ingredient
 import com.example.sophieslieblingsrezepte.data.model.Recipe
 import com.example.sophieslieblingsrezepte.data.model.Step
-import com.example.sophieslieblingsrezepte.ui.serverConnection.ServerConnector
-import org.json.JSONObject
 
-class NewRecipeViewModel : ViewModel() {
+class EditRecipeViewModel : ViewModel() {
 
     private val _ingredients = MutableLiveData<List<Ingredient>>(listOf())
     private val _steps = MutableLiveData<List<Step>>(listOf())

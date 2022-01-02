@@ -1,4 +1,4 @@
-package com.example.sophieslieblingsrezepte.ui.newRecipe
+package com.example.sophieslieblingsrezepte.ui.editRecipe
 
 import android.app.Activity
 import android.os.Bundle
@@ -15,16 +15,14 @@ import com.example.sophieslieblingsrezepte.data.model.Step
 import com.example.sophieslieblingsrezepte.ui.serverConnection.ServerConnector
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.drawToBitmap
 
 
-class NewRecipeFragment : Fragment() {
+class EditRecipeFragment : Fragment() {
 
-    private lateinit var _newRecipeViewModel: NewRecipeViewModel
+    private lateinit var _editRecipeViewModel: EditRecipeViewModel
     private lateinit var imageView: ImageView
 
     // Receiver
@@ -37,7 +35,7 @@ class NewRecipeFragment : Fragment() {
                 if (value != null)
                 {
                     imageView.setImageURI(value)
-                    _newRecipeViewModel.setImage(imageView.drawToBitmap())
+                    _editRecipeViewModel.setImage(imageView.drawToBitmap())
                 }
             }
         }
@@ -47,9 +45,9 @@ class NewRecipeFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        _newRecipeViewModel =
-                ViewModelProvider(this).get(NewRecipeViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_new_recipe, container, false)
+        _editRecipeViewModel =
+                ViewModelProvider(this).get(EditRecipeViewModel::class.java)
+        val root = inflater.inflate(R.layout.fragment_edit_recipe, container, false)
 
         val li = root.findViewById<TableLayout>(R.id.tableLayoutShowRecipe)
         val ls = root.findViewById<TableLayout>(R.id.tableLayoutDirections)
@@ -66,29 +64,29 @@ class NewRecipeFragment : Fragment() {
 
         addIngredientButton.setOnClickListener{
             val ingredient = getNewIngredient(li)
-            _newRecipeViewModel.addIngredient(ingredient)
+            _editRecipeViewModel.addIngredient(ingredient)
         }
 
         addStepButton.setOnClickListener{
             val step = getNewStep(ls)
-            _newRecipeViewModel.addStep(step)
+            _editRecipeViewModel.addStep(step)
         }
 
         addNewRecipeButton.setOnClickListener{
             val recipeName = recipeNameEditText.text.toString()
-            _newRecipeViewModel.setName(recipeName)
+            _editRecipeViewModel.setName(recipeName)
 
             val token = requireActivity().intent.getStringExtra("Token")
 
             val serverConnector = ServerConnector(token!!)
-            val resultSuccess = serverConnector.saveNewRecipe(_newRecipeViewModel.recipe)
+            val resultSuccess = serverConnector.saveNewRecipe(_editRecipeViewModel.recipe)
 
             if (resultSuccess is Result.Success)
             {
                 println("Recipe created successful")
                 Toast.makeText(
                     context,
-                    "Saving ${_newRecipeViewModel.recipe.name} was successful!",
+                    "Saving ${_editRecipeViewModel.recipe.name} was successful!",
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -104,15 +102,15 @@ class NewRecipeFragment : Fragment() {
 
         }
 
-        _newRecipeViewModel.ingredients.observe(viewLifecycleOwner, {
+        _editRecipeViewModel.ingredients.observe(viewLifecycleOwner, {
             modelChangedIngredients(li, it)
         })
 
-        _newRecipeViewModel.steps.observe(viewLifecycleOwner, {
+        _editRecipeViewModel.steps.observe(viewLifecycleOwner, {
             modelChangedSteps(ls, it)
         })
 
-        _newRecipeViewModel.name.observe(viewLifecycleOwner, {
+        _editRecipeViewModel.name.observe(viewLifecycleOwner, {
             recipeNameEditText.setText(it)
         })
         return root
@@ -172,7 +170,7 @@ class NewRecipeFragment : Fragment() {
             ll.rootView.findViewById(R.id.editTextUnit),
             ll.rootView.findViewById(R.id.editTextIngredient)
         )
-        newEntry[0].text = ingredient.amount.toString()
+        newEntry[0].text = ingredient.amount
         newEntry[1].text = ingredient.unit
         newEntry[2].text = ingredient.ingredientName
 

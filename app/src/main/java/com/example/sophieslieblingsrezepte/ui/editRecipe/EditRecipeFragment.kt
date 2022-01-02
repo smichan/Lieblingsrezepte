@@ -138,8 +138,7 @@ class EditRecipeFragment : Fragment() {
     )
         val newIngredient = Ingredient(entry[0].text.toString(), entry[1].text.toString(), entry[2].text.toString())
 
-        for (i: Int in 0..2)
-        {
+        for (i: Int in 0..2) {
             entry[i].text.clear()
         }
         return newIngredient
@@ -185,11 +184,16 @@ class EditRecipeFragment : Fragment() {
         //getLayoutParams(newEntry[2]).leftMargin = 40
         //getLayoutParams(newEntry[2]).weight += spaceHeader.weight
 
-        // Add Button to new entries
         val button = ImageButton(context)
-        row.addView(button)
         button.setImageResource(R.drawable.icons8_delete_32)
         button.background.alpha = 0
+        ingredient.setDeleteButton(button)
+
+        row.addView(button)
+        button.setOnClickListener{
+            _editRecipeViewModel.deleteIngredient(ingredient)
+        }
+
         ll.addView(row, ll.childCount-1)
     }
 

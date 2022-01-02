@@ -2,6 +2,8 @@ package com.example.sophieslieblingsrezepte.data.model
 
 import android.graphics.Bitmap
 import android.icu.text.DecimalFormat
+import android.widget.Button
+import android.widget.ImageButton
 import org.json.JSONObject
 
 class Recipe(var name: String? = null)
@@ -69,15 +71,26 @@ class Recipe(var name: String? = null)
     fun addPicture(bm: Bitmap) {
         mainPicture = bm
     }
+
+    fun deleteIngredient(ingredient: Ingredient) {
+        ingredients = ingredients.minus(ingredient)
+    }
 }
 
 
-class Ingredient(amount: String, unit: String, ingredient: String, serverId: Int? = null)
+class Ingredient(amount: String, unit: String, ingredient: String, serverId: Int? = null, button: ImageButton? = null)
 {
     public val amount: String = amount
     public val unit: String = unit
     public val ingredientName: String = ingredient
+    public var button: ImageButton? = button
     public var serverId: Int? = serverId
+
+    fun setDeleteButton(button: ImageButton)
+    {
+        this.button = button
+
+    }
 }
 
 class Step (description: String, order: Int, serverId: Int? = null)

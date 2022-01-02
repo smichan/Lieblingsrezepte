@@ -55,4 +55,10 @@ class EditRecipeViewModel : ViewModel() {
     {
         _nextStepNo += 1
     }
+
+    fun deleteIngredient(ingredient: Ingredient) {
+        recipe.deleteIngredient(ingredient)
+        _ingredients.value = recipe.ingredients
+    }
+
 }

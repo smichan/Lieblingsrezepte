@@ -1,10 +1,15 @@
 package com.example.sophieslieblingsrezepte.ui.dashboard
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -23,6 +28,8 @@ class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
+    private lateinit var serverConnector: ServerConnector
+    private lateinit var launcher: ActivityResultLauncher<String>
 
 
     override fun onCreateView(
@@ -34,13 +41,36 @@ class DashboardFragment : Fragment() {
                 ViewModelProvider(this).get(DashboardViewModel::class.java)
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
 
+        // lateinit initializing
+        val token = requireActivity().intent.getStringExtra("Token")
+        serverConnector = ServerConnector(token!!)
+        var contract = RecipeViewerContract()
+        launcher = this.registerForActivityResult(contract) {
+
+            if (it != null) deleteRecipe(it)
+
+        }
+
         val root = binding.root
         // set recycler view
         binding.galleryRecipe.setHasFixedSize(true)
         val layoutManager: RecyclerView.LayoutManager = GridLayoutManager(context, 2)
         binding.galleryRecipe.layoutManager = layoutManager
-        val galleryImages: ArrayList<GalleryImage> = prepareData()
+        updateGallery()
+        return root
+    }
 
+    private fun deleteRecipe(id: Int) {
+
+        serverConnector.deleteRecipe(id)
+        //TODO: Fix this not like an idiot
+        println("Wait for it")
+        updateGallery()
+    }
+
+    private fun updateGallery()
+    {
+        val galleryImages = prepareData()
         val adapter = GalleryAdapter(context, galleryImages)
         binding.galleryRecipe.adapter = adapter
 
@@ -49,14 +79,10 @@ class DashboardFragment : Fragment() {
             val recipeId = galleryImages[galleryPosition].recipe_id
             loadRecipe(recipeId)
         })
-
-        return root
     }
 
     private fun prepareData(): ArrayList<GalleryImage> {
 
-        val token = requireActivity().intent.getStringExtra("Token")
-        val serverConnector = ServerConnector(token!!)
         val recipeOverview = serverConnector.searchRecipes()
 
         val galleryList: ArrayList<GalleryImage> = ArrayList()
@@ -71,12 +97,8 @@ class DashboardFragment : Fragment() {
 
     private fun loadRecipe(recipeId: Int)
     {
-        val token = requireActivity().intent.getStringExtra("Token")
-        val serverConnector = ServerConnector(token!!)
         val json = serverConnector.getRecipe(recipeId)
-        val intent = Intent(context, RecipeViewer::class.java)
-        intent.putExtra("Json", json.toString());
-        this.startActivity(intent)
+        launcher.launch(json.toString())
     }
 
     override fun onDestroyView() {
@@ -84,4 +106,26 @@ class DashboardFragment : Fragment() {
         _binding = null
     }
 }
+
+class RecipeViewerContract : ActivityResultContract<String, Int>()
+{
+    override fun createIntent(context: Context, json: String?): Intent {
+        val intent = Intent(context, RecipeViewer::class.java)
+        intent.putExtra("Json", json)
+        return intent
+    }
+
+    override fun parseResult(resultCode: Int, intent: Intent?): Int? {
+        if (resultCode != Activity.RESULT_OK) {
+            return null
+        }
+        if (intent == null)
+        {
+            return null
+        }
+        // default Value cannot be returned, because Id is always set in the else case
+        return intent!!.getIntExtra("id", -1)
+    }
+}
+
 

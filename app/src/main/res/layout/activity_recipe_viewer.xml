@@ -6,24 +6,32 @@
     android:layout_height="match_parent"
     tools:context=".ui.dashboard.RecipeViewer">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/Theme.SophiesLieblingsrezepte.AppBarOverlay">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/design_default_color_primary"
-            app:popupTheme="@style/Theme.SophiesLieblingsrezepte.PopupOverlay"
-            app:title="@string/recipename" />
+            android:layout_height="wrap_content"
+            android:theme="@style/Theme.SophiesLieblingsrezepte.AppBarOverlay">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/design_default_color_primary"
+                app:popupTheme="@style/Theme.SophiesLieblingsrezepte.PopupOverlay"
+                app:title="@string/recipename" />
 
-    <include
-        android:id="@+id/fragmentLayout"
-        layout="@layout/content_recipe_viewer" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentContainerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabEdit"

@@ -107,6 +107,8 @@ class DashboardFragment : Fragment() {
     }
 }
 
+//Json wird an neue Activity gesendet, um Rezept anzuzeigen
+//Rückgabe: id bei Löschung
 class RecipeViewerContract : ActivityResultContract<String, Int>()
 {
     override fun createIntent(context: Context, json: String?): Intent {
